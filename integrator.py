@@ -8,7 +8,7 @@ import json
 import math
 
 # Load models
-yolo_model = YOLO("C:/Users/vardh/Desktop/Traffic_Signs/models/best.pt")
+yolo_model = YOLO("C:/Users/vardh/Desktop/Traffic_Signs/runs/detect/the_yolov8n_model/weights/best.pt")
 cnn_model = load_model("C:/Users/vardh/Desktop/Traffic_Signs/models/the_cnn_model.h5")
 
 # Load CNN label map

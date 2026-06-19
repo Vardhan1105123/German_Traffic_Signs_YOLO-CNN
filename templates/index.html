@@ -2,29 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="German Traffic Sign Detection & Classification. Upload an image to analyze traffic signs using YOLOv8 and CNNs.">
     <title>Traffic Sign Detector</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h2>🚦 Traffic Sign Detection & Classification</h2>
+    <div class="container">
+        <header>
+            <div class="logo-icon"></div>
+            <h1>Traffic Sign Detector</h1>
+            <p class="subtitle">Detection & Classification using YOLOv8 + CNN</p>
+        </header>
 
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*,.ppm" required><br>
-        <input type="submit" value="Upload & Analyze">
-    </form>
+        <main>
+            <div class="upload-card">
+                <form method="POST" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+                    <div class="file-drop-area">
+                        <span class="file-msg">Drag & Drop an image or <span class="highlight">Browse</span></span>
+                        <input type="file" name="image" class="file-input" accept="image/*,.ppm" required>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Analyze Image</span>
+                        <div class="spinner" id="spinner"></div>
+                    </button>
+                </form>
+            </div>
 
-    {% if result %}
-        <h3>✅ Result Image:</h3>
-        <img src="{{ result }}" alt="Processed Image">
+            {% if error %}
+                <div class="alert alert-error">
+                    <strong>Error:</strong> {{ error }}
+                </div>
+            {% endif %}
 
-        {% if signs %}
-            <h3>🛑 Detected Signs:</h3>
-            <ul>
-                {% for sign in signs %}
-                    <li>{{ sign }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endif %}
+            {% if result %}
+                <div class="results-section fade-in">
+                    <h2>Analysis Results</h2>
+                    
+                    <div class="result-layout">
+                        <div class="image-container">
+                            <img src="{{ result }}" alt="Processed Image with detected traffic signs">
+                        </div>
+                        
+                        {% if signs %}
+                            <div class="signs-container">
+                                <h3>Detected Signs</h3>
+                                <ul class="sign-list">
+                                    {% for sign in signs %}
+                                        <li>
+                                            <div class="sign-icon"></div>
+                                            <span class="sign-name">{{ sign }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        // Simple script to show spinner and handle file input UI
+        const fileInput = document.querySelector('.file-input');
+        const fileMsg = document.querySelector('.file-msg');
+        const form = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.querySelector('.btn-text');
+        const spinner = document.getElementById('spinner');
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileMsg.innerHTML = `<span class="highlight">${fileInput.files[0].name}</span> selected`;
+            } else {
+                fileMsg.innerHTML = `Drag & Drop an image or <span class="highlight">Browse</span>`;
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            if (fileInput.files.length > 0) {
+                btnText.style.display = 'none';
+                spinner.style.display = 'block';
+                submitBtn.classList.add('loading');
+            }
+        });
+    </script>
 </body>
 </html>

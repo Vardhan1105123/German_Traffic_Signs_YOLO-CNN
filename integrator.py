@@ -7,18 +7,23 @@ from tensorflow.keras.preprocessing.image import img_to_array
 import json
 import math
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load models
-yolo_model = YOLO("C:/Users/vardh/Desktop/Traffic_Signs/runs/detect/the_yolov8n_model/weights/best.pt")
-cnn_model = load_model("C:/Users/vardh/Desktop/Traffic_Signs/models/the_cnn_model.h5")
+yolo_model = YOLO(os.path.join(BASE_DIR, "models", "best.pt"))
+cnn_model = load_model(os.path.join(BASE_DIR, "models", "the_cnn_model.h5"))
 
 # Load CNN label map
-with open("label_map.json", "r") as f:
+with open(os.path.join(BASE_DIR, "label_map.json"), "r") as f:
     label_map = json.load(f)
 
-def run_integrated_detection(image_path, tile_size=160 , output_path="static/output.jpg"):
+def run_integrated_detection(image_path, tile_size=160 , output_path="static/uploads/output.jpg"):
     i_image = cv2.imread(image_path)
+    if i_image is None:
+        return None, []
     image = cv2.resize(i_image, (256, 256))
-    #image = cv2.imread(image_path)
     h, w, _ = image.shape
     full_result = image.copy()
     detected_labels = []
@@ -59,16 +64,11 @@ def run_integrated_detection(image_path, tile_size=160 , output_path="static/out
                     roi_array = np.expand_dims(roi_array, axis=0)
 
                     prediction = cnn_model.predict(roi_array)
-                    #class_idx = int(np.argmax(prediction))
                     confidence = np.max(prediction)
                     if confidence > 0.5:
                         label = label_map[str(np.argmax(prediction))]
                     else :
                         label = "Unknown"
-                    #if str(class_idx) in label_map:
-                    #    label = label_map[str(class_idx)]
-                    #else:
-                    #    print(f"Class index {class_idx} not in label_map")
 
                 except Exception as e:
                     print(f"Error classifying with CNN: {e}")
@@ -82,6 +82,6 @@ def run_integrated_detection(image_path, tile_size=160 , output_path="static/out
                 
 
     h, w, _ = i_image.shape
-    f_full_result = cv2.resize(full_result, (h, w))
+    f_full_result = cv2.resize(full_result, (w, h))
     cv2.imwrite(output_path, f_full_result)
     return output_path, detected_labels

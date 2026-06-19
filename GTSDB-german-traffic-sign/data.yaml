@@ -43,7 +43,7 @@ names:
   - End of no passing
   - End of no passing by vehicles over 3.5 metric tons
 nc: 43
-path: C:/Users/vardh/Desktop/Traffic_Signs/GTSDB-german-traffic-sign/images
-test: C:/Users/vardh/Desktop/Traffic_Signs/GTSDB-german-traffic-sign/images/test
-train: C:/Users/vardh/Desktop/Traffic_Signs/GTSDB-german-traffic-sign/images/train
-val: C:/Users/vardh/Desktop/Traffic_Signs/GTSDB-german-traffic-sign/images/val
+path: images
+test: test
+train: train
+val: val
